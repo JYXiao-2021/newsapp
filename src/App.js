@@ -18,6 +18,8 @@ function App() {
     };
 
     fetchData();
+    const savedNews = JSON.parse(localStorage.getItem('savedArticles')) || [];
+    setSavedArticles(savedNews);
   }, [category]);
 
   const handleCategoryChange = (event) => {
@@ -58,6 +60,12 @@ function App() {
 
   const saveArticle = (article) => {
     setSavedArticles(prev => [...prev, article]);
+  };
+
+  const saveArticleToLocal = (article) => {
+    const savedNews = JSON.parse(localStorage.getItem('savedArticles')) || [];
+    savedNews.push(article);
+    localStorage.setItem('savedArticles', JSON.stringify(savedNews));
   };
 
   return (
@@ -101,17 +109,27 @@ function App() {
             <h2>{article.title}</h2>
             <p>{article.description}</p>
             <img src={article.urlToImage} alt={article.title} />
-            <button onClick={() => saveArticle(article)}>Save</button>
+            <button onClick={() => {saveArticle(article); saveArticleToLocal(article); }}>Save</button>
           </div>
         ))}
+        {savedArticles.length > 0 && (
+          <div className="saved-news">
+            <h3>Saved News</h3>
+            {savedArticles.map((article, index) => (
+              <div key={index}>
+                <h4>{article.title}</h4>
+                <p>{article.description}</p>
+              </div>
+            ))}
+          </div>
+        )}
     </>
     ) : (
       <p>No articles found.</p>
     )}
     </div>
     
-  );
-  
+  );  
 }
 
 export default App;
